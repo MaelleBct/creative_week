@@ -1,0 +1,12 @@
+
+
+.accueil_lien{
+  color : white;
+}
+
+.bienvenue_image{
+  background-image: url('Images/drink.jpg');
+  background-size:100% auto;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
