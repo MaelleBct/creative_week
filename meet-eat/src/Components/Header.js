@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Component} from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 import styled from 'styled-components';
@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import Home from '../Components/Home';
 import Inscription from '../Components/Inscription';
 import ConnexionMonCompte from '../Components/ConnexionMonCompte';
+import firebase, { auth, provider } from '../firebase.js';
 
 const HeaderStyled = styled.div`
   background-color : #ffb618;
@@ -41,7 +42,20 @@ const accueil_lien_proposer_meet = {
 }
 
 
-const Header = () => (
+class Header extends Component{
+    constructor(){
+    super();
+    this.login = this.login.bind(this); // <-- add this line
+    this.logout = this.logout.bind(this); // <-- add this line
+    this.state = {
+      currentItem:'',
+      username:'',
+      item:[],
+      user:null
+    }
+  }
+  render () {
+    return (
   <Router>
     <div>
       <HeaderStyled>
@@ -61,7 +75,25 @@ const Header = () => (
           <Link style={accueil_lien} to="/inscription">Inscription</Link>
         </ItemListStyled>
         <ItemListStyled>
-          <Link style={accueil_lien} to="/connexion_mon_compte">Mon Compte</Link>
+         
+          <div className="wrapper">
+          <p>Mon compte</p>
+          {this.state.user ?
+          <button onClick={this.logout}>Log Out</button>                
+          :
+           <Link style={accueil_lien} to="/connexion_mon_compte"><button onClick={this.login}>Log In</button></Link>              
+          }
+          {this.state.user ?
+          <div>
+           <div className='user-profile'>
+           <img src={this.state.user.photoURL} />
+          </div>
+          </div>
+          :
+          <div className='wrapper'>
+           </div>
+          }
+          </div>
         </ItemListStyled>
       </ListMenuStyled>
      
@@ -75,9 +107,35 @@ const Header = () => (
      
     </div>
   </Router>
-);
+    )
+}
 
-
-
-
+handleChange(e) {
+  /* ... */
+}
+logout() {
+    auth.signOut()
+    .then(() => {
+      this.setState({
+        user: null
+      });
+    });
+  }
+login() {
+  auth.signInWithPopup(provider) 
+    .then((result) => {
+      const user = result.user;
+      this.setState({
+        user
+      });
+    });
+}
+componentDidMount() {
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      this.setState({ user });
+    } 
+  });
+}
+}
 export default Header;
