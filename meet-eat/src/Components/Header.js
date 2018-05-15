@@ -23,11 +23,24 @@ const ListLogoStyled = styled.ul`
 const ListMenuStyled = styled.ul`
   list-style:none;
   display : flex;
-
 `
 
 const ItemListStyled = styled.li`
   margin-right : 15px;
+`
+
+const ImgStyled = styled.img`
+  width:30px;
+  heigth:30px;
+  border-radius:50px;
+`
+const HiddenMenu = styled.ul`
+  display:none!important;
+  list-style:none;
+`
+
+const HiddenDiv = styled.div`
+  display:none;
 `
 
 const accueil_lien = {
@@ -54,6 +67,8 @@ class Header extends Component{
       user:null
     }
   }
+
+
   render () {
     return (
   <Router>
@@ -77,34 +92,32 @@ class Header extends Component{
         <ItemListStyled>
          
           <div className="wrapper">
-          <p>Mon compte</p>
           {this.state.user ?
-          <button onClick={this.logout}>Log Out</button>                
+          <Link style={accueil_lien} to="/connexion_mon_compte">
+            <div>
+              <div className='user-profile' onClick={this.displayMenu}>
+                <ImgStyled src={this.state.user.photoURL}/>
+              </div>
+                <HiddenDiv>
+                <HiddenMenu>
+                    <li onClick={this.logout}>Log Out</li>
+                </HiddenMenu>
+                </HiddenDiv>
+            </div>
+          </Link> 
+                         
           :
-           <Link style={accueil_lien} to="/connexion_mon_compte"><button onClick={this.login}>Log In</button></Link>              
-          }
-          {this.state.user ?
-          <div>
-           <div className='user-profile'>
-           <img src={this.state.user.photoURL} />
-          </div>
-          </div>
-          :
-          <div className='wrapper'>
-           </div>
-          }
-          </div>
+          <button onClick={this.login}>Log In</button> 
+        }
+        </div>
         </ItemListStyled>
-      </ListMenuStyled>
-     
-      
+        </ListMenuStyled>
       </HeaderStyled>      
 
       <Route exact path="/" component={Home} />
       <Route path="/proposer_meet" component={ConnexionMonCompte} />
       <Route path="/inscription" component={Inscription} />
-      <Route path="/connexion_mon_compte" component={ConnexionMonCompte} />
-     
+      <Route path="/connexion_mon_compte" component={ConnexionMonCompte} />  
     </div>
   </Router>
     )
@@ -136,6 +149,16 @@ componentDidMount() {
       this.setState({ user });
     } 
   });
+}
+
+displayMenu() {
+  const div = document.getElementsByTagName('HiddenDiv');
+  console.log(div.style);
+    if(div.display=="block"){
+      div.display="none";
+    }else{
+      div.display="block";
+    }
 }
 }
 export default Header;
