@@ -1,17 +1,57 @@
 import React, {Component} from 'react';
 import ConnexionMonCompte from './ConnexionMonCompte';
 
-import firebase from '../firebase';
+import styled from 'styled-components';
+import Header from '../Components/Header';
+import firebase, { auth, provider } from '../firebase';
+
+const TitleStyled = styled.h3`
+    text-align : center;
+    text-transform : uppercase;
+    color : #FFB618;
+`
+
+const FormulaireStyled = styled.form`
+    background-color : #F8F8F8;
+    height : 100%;
+`
+
+ const FormulaireMeetStyled = styled.div`
+    display : flex;
+    justify-content :center;
+`
+
+const DescriptionStyled = styled.p`
+    text-align : center;
+`
+
+const ParagrapheButtonStyled = styled.p`
+    text-align : center;
+`
+
+
+const ButtonStyled = styled.button`
+    background-color : white;
+    color : #FFB618;
+    line-height : 60px;
+    border : 2px solid #FFB618;
+    padding-left : 46px;
+    padding-right : 46px;
+`
 
 
 class NouvelleAnnonce extends Component{
     constructor(){
         super();
+        
+        const user = new Header;
         this.state = {
+            restaurant: '',
+            lieu: '',
             date: '',
+            place: '',
             description: '',
-            nomCovoitureur: '',
-            titre: ''
+            user:'',
           }
           this.handleChange = this.handleChange.bind(this);
           this.handleSubmit = this.handleSubmit.bind(this); // <-- add this line
@@ -20,41 +60,57 @@ class NouvelleAnnonce extends Component{
         handleChange(e) {
             this.setState({
               [e.target.name]: e.target.value
-            });
+            });    
           }
 
-    handleSubmit(e) {
+    handleSubmit(e,login) {
   e.preventDefault();
   const itemsRef = firebase.database().ref('annonces');
   const item = {
+    annonceRestaurant: this.state.restaurant,
+    annonceLieu: this.state.lieu,
     annonceDate: this.state.date,
+    annoncePlace: this.state.place,
     annonceDescription: this.state.description,
-    annonceNomCovoitureur: this.state.nomCovoitureur,
-    annoncetitre: this.state.titre,
+    annonceUser:this.state.user.displayName
   }
+
   itemsRef.push(item);
   this.setState({
+    restaurant: '',
+    lieu: '',  
     date: '',
+    place: '',
     description: '',
-    nomCovoitureur: '',
-    titre: ''
   });
 }
 
     render(){
         return(
             <div>
-      <h3>Proposer un meet</h3>
-      <form onSubmit={this.handleSubmit}>
-  <input type="date" name="date" placeholder="Quel est votre date ?" onChange={this.handleChange} value={this.state.date} />
-  <input type="text" name="description" placeholder="Quel est votre description ?" onChange={this.handleChange} value={this.state.description} />
-  <input type="text" name="nomCovoitureur" placeholder="Quel est votre nom ?" onChange={this.handleChange} value={this.state.nomCovoitureur} />
-  <input type="text" name="titre" placeholder="Quel est votre mot de titre ?" onChange={this.handleChange} value={this.state.titre} />
-  
-  <button>Inscription</button>
-</form>
+                <div>
+                <TitleStyled>Proposer votre meet</TitleStyled>
+                    <FormulaireStyled onSubmit={this.handleSubmit}>
+                        
 
-      </div>
+                        <FormulaireMeetStyled>
+                            <div>
+                                <p><label>Restaurant</label><input type="text" name="restaurant" placeholder="Restaurant" onChange={this.handleChange} value={this.state.restaurant} /></p>
+                                <p><label>Lieu</label><input type="text" name="lieu" placeholder="Quel est votre lieu ?" onChange={this.handleChange} value={this.state.lieu} /></p>
+                            </div>
+
+                            <div>
+                                <p><label>Date + heure de départ</label><input type="date" name="date" placeholder="Quel est votre date ?" onChange={this.handleChange} value={this.state.date} /></p>
+                                <p><label>Places</label><input type="number" name="place" placeholder="Quel est votre nombre de places ?" onChange={this.handleChange} value={this.state.place} /></p>
+                            </div>
+                        </FormulaireMeetStyled>
+
+                        <DescriptionStyled><input type="text" name="description" placeholder="Quel est votre description ?" onChange={this.handleChange} value={this.state.description} /></DescriptionStyled>
+                        <ParagrapheButtonStyled><ButtonStyled>Créer un meet</ButtonStyled></ParagrapheButtonStyled>
+                    </FormulaireStyled>
+                </div>
+            </div>
+ 
         )
     }
 
@@ -62,6 +118,19 @@ class NouvelleAnnonce extends Component{
 }
 
 export default NouvelleAnnonce;
+
+
+
+
+/*
+<AnnonceStyled>
+                    
+                </AnnonceStyled>
+
+                <AnnonceStyled>
+                    
+                </AnnonceStyled>
+*/
 
 
 /*

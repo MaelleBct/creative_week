@@ -8,7 +8,7 @@ import Footer from '../Components/Footer';
 import ListeAnnonces from '../Components/ListeAnnonces';
 import Map from '../Components/Map';
 
-import PersonList from '../Components/PersonList';
+
 
 const HomeStyled = styled.div`
   display : grid;

@@ -6,7 +6,9 @@ import styled from 'styled-components';
 import Home from '../Components/Home';
 import Inscription from '../Components/Inscription';
 import ConnexionMonCompte from '../Components/ConnexionMonCompte';
+import NouvelleAnnonce from '../Components/NouvelleAnnonce';
 import firebase, { auth, provider } from '../firebase.js';
+
 
 const HeaderStyled = styled.div`
   background-color : #ffb618;
@@ -23,24 +25,18 @@ const ListLogoStyled = styled.ul`
 const ListMenuStyled = styled.ul`
   list-style:none;
   display : flex;
+
 `
 
 const ItemListStyled = styled.li`
   margin-right : 15px;
+  display:inline-block
 `
-
 const ImgStyled = styled.img`
-  width:30px;
-  heigth:30px;
+  width:40px;
+  heigth:40px;
+  margin-right:15px;
   border-radius:50px;
-`
-const HiddenMenu = styled.ul`
-  display:none!important;
-  list-style:none;
-`
-
-const HiddenDiv = styled.div`
-  display:none;
 `
 
 const accueil_lien = {
@@ -53,8 +49,6 @@ const accueil_lien_proposer_meet = {
   textDecoration : `none`,
   border : `2px solid white`,
 }
-
-
 class Header extends Component{
     constructor(){
     super();
@@ -68,9 +62,8 @@ class Header extends Component{
     }
   }
 
-
-  render () {
-    return (
+render () {
+	 return (
   <Router>
     <div>
       <HeaderStyled>
@@ -79,52 +72,45 @@ class Header extends Component{
           <Link style={accueil_lien} to="/">Home</Link>
         </li>
         </ListLogoStyled>
-     
-         <ListMenuStyled>
-
-           <ItemListStyled>
-          <Link style={accueil_lien_proposer_meet} to="/proposer_meet">Proposer un meet</Link>
-        </ItemListStyled>
-        
-        <ItemListStyled>
-          <Link style={accueil_lien} to="/inscription">Inscription</Link>
-        </ItemListStyled>
-        <ItemListStyled>
-         
-          <div className="wrapper">
+      <ListMenuStyled>
           {this.state.user ?
-          <Link style={accueil_lien} to="/connexion_mon_compte">
-            <div>
+          <div>
+          <ItemListStyled>
+          <Link style={accueil_lien_proposer_meet} to="/proposer_meet">Proposer un meet</Link>
+          </ItemListStyled>
+          <Link style={accueil_lien} to="">
+          <ItemListStyled>
+          <li onClick={this.logout}>Log Out</li>
+          </ItemListStyled>
+          </Link>
+          <ItemListStyled>
               <div className='user-profile' onClick={this.displayMenu}>
                 <ImgStyled src={this.state.user.photoURL}/>
               </div>
-                <HiddenDiv>
-                <HiddenMenu>
-                    <li onClick={this.logout}>Log Out</li>
-                </HiddenMenu>
-                </HiddenDiv>
-            </div>
-          </Link> 
-                         
+          </ItemListStyled>
+          </div>        
           :
-          <button onClick={this.login}>Log In</button> 
+          <button onClick={this.login}>Log In
+          	</button> 
         }
-        </div>
-        </ItemListStyled>
-        </ListMenuStyled>
+      </ListMenuStyled>
+     
+      
       </HeaderStyled>      
 
       <Route exact path="/" component={Home} />
-      <Route path="/proposer_meet" component={ConnexionMonCompte} />
+      <Route path="/proposer_meet" component={NouvelleAnnonce} />
       <Route path="/inscription" component={Inscription} />
-      <Route path="/connexion_mon_compte" component={ConnexionMonCompte} />  
+      <Route path="/connexion_mon_compte" component={ConnexionMonCompte} />
+     
     </div>
   </Router>
-    )
+	)
 }
 
-handleChange(e) {
-  /* ... */
+
+handleSubmit(e) {
+
 }
 logout() {
     auth.signOut()
@@ -138,11 +124,24 @@ login() {
   auth.signInWithPopup(provider) 
     .then((result) => {
       const user = result.user;
+      this.persist(user);
       this.setState({
         user
       });
     });
+  
 }
+
+persist(user){
+	console.log("i'm persisted");
+  const itemsRef = firebase.database().ref('covoitureurs');
+  const item = {
+    covoitureurEmail: user.email,
+    covoitureurName: user.displayName,
+  }
+  itemsRef.push(item);
+}
+
 componentDidMount() {
   auth.onAuthStateChanged((user) => {
     if (user) {
@@ -150,15 +149,8 @@ componentDidMount() {
     } 
   });
 }
+}
 
-displayMenu() {
-  const div = document.getElementsByTagName('HiddenDiv');
-  console.log(div.style);
-    if(div.display=="block"){
-      div.display="none";
-    }else{
-      div.display="block";
-    }
-}
-}
+
+
 export default Header;

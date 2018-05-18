@@ -1,54 +1,119 @@
 import React, { Component } from 'react';
 
-import * as firebase from 'firebase';
-import config from '../firebase';
+import styled from 'styled-components';
+
+import firebase from '../firebase';
+
+const AnnonceItemStyled = styled.li`
+  display : grid;
+  grid-template-columns : 1fr 2fr;
+  border-bottom : 1px solid grey;
+  padding-bottom : 30px;
+  padding-top : 30px;
+`
+
+const CovoitureurStyled = styled.div`
+  display : flex;
+  flex-direction : row;
+  border-right : 1px solid grey;
+`
+
+const ParagrapheCovoitureurStyled = styled.div`
+  margin-left : 15px;
+  margin-right : 15px;
+  text-align : center;
+`
+
+const TitleContenuStyled = styled.h4`
+  text-align : center;
+`
+
+const ParagrapheContenuStyled = styled.p`
+  text-align : center;
+`
+
+const ParagraphePlaceStyled = styled.p`
+  text-align : end;
+`
+
+const ImageStyled = styled.img`
+  border-radius : 100%;
+`
 
 class AnnoncesItem extends Component {
   constructor(){
     super();
-    firebase.initializeApp(config)
     this.state = {
-      loading : true
+    
+      annonceDate: '',
+      annonceDepart: '',
+      annonceDescription: '',
+      annonceLieu: '',
+      annonceNomCovoitureur: '',
+      annoncePlace: '',
+      annonces: []
     }
   }
 
-  componentWillMount() {
-    const ref = firebase.database().ref('annonces')
-
-    ref.on('value', snapshot=> {
+  componentDidMount(){
+    const annoncesRef = firebase.database().ref('annonces');
+    annoncesRef.on('value', (snapshot) => {
+      let annonces = snapshot.val();
+      let newState = [];
+      for (let annonce in annonces) {
+        newState.push({
+          id: annonce,
+          annonceDate: annonces[annonce].annonceDate,
+          annonceDepart: annonces[annonce].annonceDepart,
+          annonceDescription: annonces[annonce].annonceDescription,
+          annonceLieu: annonces[annonce].annonceLieu,
+          annonceNomCovoitureur: annonces[annonce].annonceNomCovoitureur,
+          annoncePlace: annonces[annonce].annoncePlace,
+        });
+      }
       this.setState({
-        annonces:snapshot.val(),
-        loading:false
-      })
-    })
+        annonces: newState
+      });
+    });
   }
+
 
   render() {
-    if(this.state.loading){
-      return (<h1>Chargement</h1>)
-    }
-    const annoncesListe = this.state.annonces.map(annonceItem=> <h2>{annonceItem.nom}</h2>)
+    
+    
     return (
-      <div>
-        <p>{this.state.annonces[0].titre}</p>
-        <p>{this.state.annonces[0].nomCovoitureur}</p>
-        <p>{this.state.annonces[0].date}</p>
-        <p>{this.state.annonces[0].description}</p>
-      </div>
+<div>
+  <div>
+    <ul>
+      {this.state.annonces.map((annonce) => {
+        return (
+
+          <AnnonceItemStyled key={annonce.id}>
+            <CovoitureurStyled>
+              <p><ImageStyled src="https://fakeimg.pl/60/"/></p>
+              <ParagrapheCovoitureurStyled><p>{annonce.annonceNomCovoitureur}</p><p>{annonce.annonceDate}</p><p>{annonce.annonceDepart}</p></ParagrapheCovoitureurStyled>
+            </CovoitureurStyled>
+
+
+
+            <div>
+              <TitleContenuStyled>{annonce.annonceLieu}</TitleContenuStyled>
+              <ParagraphePlaceStyled>{annonce.annoncePlace}</ParagraphePlaceStyled>
+              <ParagrapheContenuStyled>{annonce.annonceDescription}</ParagrapheContenuStyled>
+            </div>
+          </AnnonceItemStyled>
+          
+
+          
+          
+        )
+      })}
+    </ul>
+  </div>
+</div>
     );
   }
 }
 
+
 export default AnnoncesItem;
-
-
-//props : attribut d'un parent à un enfant
-/*const AnnoncesItem = ({restaurant}) => {
-  return (
-    <div>
-      <li>Une annonce : {restaurant}</li>
-    </div>
-  )
-}
-
-export default AnnoncesItem;*/

@@ -17,9 +17,9 @@ const restaurants = ["restau1", "restau2", "restau3", "restau4"]
   return (
     <div>
       <TitleStyled>Prochains meets</TitleStyled>
-      <ul>
-        Liste annonces
-      </ul>
+
+        <AnnoncesItem/>
+
       
     </div>
   )

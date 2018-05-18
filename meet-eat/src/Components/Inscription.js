@@ -1,14 +1,64 @@
 import React, {Component} from 'react';
 
+import styled from 'styled-components';
+import '../App.css';
+
 import firebase from '../firebase';
+
+const InscriptionStyled = styled.div`
+  display:grid;
+  grid-template-columns : 1fr 1fr 1fr;
+`
+const FormStyled = styled.form`
+  display:flex;
+  flex-direction:column;
+`
+
+const FormItemStyled = styled.div`
+  grid-column-start : 2;
+  background-color : white;
+  border-radius : 15px;
+  margin-top : 60px;
+  margin-bottom : 100px;
+  padding : 40px;
+  
+`
+
+const TitleStyled = styled.h3`
+  text-align : center;
+  color : #ffb618;
+`
+
+const ButtonStyled = styled.button`
+  background-color : #ffb618;
+  color : white;
+  line-height: 30px;
+  border-radius : 20px;
+  border : 1px solid #ffb618;
+  margin-top : 40px;
+  margin-left : 40px;
+  margin-right : 40px;
+`
+
+const InputStyled = styled.input`
+  background-color : #e5e5e5;
+  border : none;
+  color : #ffb618;
+  line-height : 30px;
+  padding-left : 10px;
+`
+
+const LabelStyled = styled.label`
+  font-weight : 500;
+  margin-bottom : 10px;
+  margin-top : 30px;
+`
 
 
 class Inscription extends Component {
   constructor() {
     super();
     this.state = {
-      nom: '',
-      prenom: '',
       email: '',
       password: ''
     }
@@ -26,15 +76,11 @@ handleSubmit(e) {
   e.preventDefault();
   const itemsRef = firebase.database().ref('covoitureurs');
   const item = {
-    covoitureurNom: this.state.nom,
-    covoitureurPrenom: this.state.prenom,
     covoitureurEmail: this.state.email,
     covoitureurPassword: this.state.password,
   }
   itemsRef.push(item);
   this.setState({
-    nom: '',
-    prenom: '',
     email: '',
     password: '',
   });
@@ -42,18 +88,21 @@ handleSubmit(e) {
 
 render (){
   return (
-    <div>
-      <h3>Inscription</h3>
-      <form onSubmit={this.handleSubmit}>
-  <input type="text" name="prenom" placeholder="Quel est votre prénom ?" onChange={this.handleChange} value={this.state.prenom} />
-  <input type="text" name="nom" placeholder="Quel est votre nom ?" onChange={this.handleChange} value={this.state.nom} />
-  <input type="email" name="email" placeholder="Quel est votre email ?" onChange={this.handleChange} value={this.state.email} />
-  <input type="password" name="password" placeholder="Quel est votre mot de passe ?" onChange={this.handleChange} value={this.state.password} />
-  
-  <button>Inscription</button>
-</form>
-
-      </div>
+    <div className="inscription_image">
+      
+    <InscriptionStyled>
+      
+      <FormItemStyled>
+          <TitleStyled>Logo</TitleStyled>
+          <FormStyled onSubmit={this.handleSubmit}>
+            <LabelStyled>Adresse mail</LabelStyled><InputStyled type="email" name="email" placeholder="Quel est votre email ?" onChange={this.handleChange} value={this.state.email} />
+            <LabelStyled>Mot de passe</LabelStyled><InputStyled type="password" name="password" placeholder="Quel est votre mot de passe ?" onChange={this.handleChange} value={this.state.password} />
+            <ButtonStyled>S'inscrire</ButtonStyled>
+          </FormStyled>
+      </FormItemStyled>
+      
+    </InscriptionStyled>
+    </div>
     );
   }
 }
